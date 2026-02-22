@@ -20,9 +20,11 @@ function RawMaterialTable({ data, onRemove }) {
               <Button
                 variant="danger"
                 size="sm"
+                title="Remover registro"
+                className="me-2"
                 onClick={() => onRemove(item.id)}
               >
-                Remover
+                <i className="bi bi-trash"></i>
               </Button>
             </td>
           </tr>

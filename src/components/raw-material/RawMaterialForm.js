@@ -92,7 +92,7 @@ function RawMaterialForm({ onAdd }) {
           </Col>
         </Row>
 
-        <Button variant="primary" type="submit">
+        <Button type="submit" variant="success">
           Salvar
         </Button>
       </Form>

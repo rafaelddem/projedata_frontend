@@ -173,22 +173,23 @@ function ProductForm({ onAdd }) {
             </Col>
             <Col xs={4} md={1} className="mb-2">
               <Button
-                variant="danger"
                 type="button"
+                variant="danger"
                 className='w-100'
+                title="Remover matéria-prima"
                 onClick={() => removeSupplyFields(index)}
               >
-                X
+                <i className="bi bi-trash"></i>
               </Button>
             </Col>
           </Row>
         ))}
 
-        <Button variant="secondary" type="button" onClick={addSupplyFields} className="me-2">
+        <Button type="button" variant="info" className="me-2" onClick={addSupplyFields}>
           Adicionar Matéria-prima
         </Button>
 
-        <Button variant="primary" type="submit">
+        <Button type="submit" variant="success">
           Salvar
         </Button>
       </Form>
