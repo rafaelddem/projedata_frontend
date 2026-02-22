@@ -33,7 +33,7 @@ function RawMaterialPage() {
 
   return (
     <Container className="mt-5">
-      <h2 className="mb-4">Matéria prima</h2>
+      <h2 className="mb-4">Matéria-prima</h2>
       <div className="mb-4">
         <RawMaterialForm onAdd={handleAdd} />
       </div>

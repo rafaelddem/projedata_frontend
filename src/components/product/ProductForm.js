@@ -5,13 +5,15 @@ import Button from 'react-bootstrap/Button';
 import { formatCurrency } from '../../formatter/money';
 
 function ProductForm({ onAdd }) {
-  const [displayValue, setDisplayValue] = useState('');
-  const [rawValue, setRawValue] = useState(null);
   const [name, setName] = useState('');
+  const [rawValue, setRawValue] = useState(null);
+  const [displayValue, setDisplayValue] = useState('');
+  const [supplies, setSupplies] = useState([]);
+  const [options, setOptions] = useState([]);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
-  const handleChange = (e) => {
+  const handleValueChange = (e) => {
     const input = e.target.value.replace(/\D/g, '');
     const numericValue = parseInt(input, 10);
 
@@ -24,12 +26,34 @@ function ProductForm({ onAdd }) {
     }
   };
 
+  const addSupplyFields = () => {
+    setSupplies([...supplies, { raw_material: '', quantity: '' }]);
+  };
+
+  const removeSupplyFields = (index) => {
+    const updated = supplies.filter((_, i) => i !== index);
+    setSupplies(updated);
+  };
+
+  const updateSupplies = (index, field, newValue) => {
+    const updated = [...supplies];
+    updated[index][field] = newValue;
+    setSupplies(updated);
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     setError(null);
     setSuccess(null);
 
-    const newMaterial = { name: name, value: rawValue };
+    const newMaterial = {
+      name: name, 
+      value: rawValue, 
+      raw_materials: supplies.map(supply => ({
+        raw_material_id: supply.raw_material,
+        quantity: supply.quantity,
+      }))
+    };
 
     fetch('http://localhost:8080/api/products', {
       method: 'POST',
@@ -48,12 +72,21 @@ function ProductForm({ onAdd }) {
         onAdd(data);
         setName('');
         setRawValue(null);
+        setDisplayValue('');
+        setSupplies([]);
         setSuccess('Cadastro realizado com sucesso!');
       })
       .catch(err => {
         setError(err.message);
       });
     };
+
+    useEffect(() => {
+      fetch('http://localhost:8080/api/raw_materials')
+        .then(res => res.json())
+        .then(data => setOptions(data))
+        .catch(err => console.error('Erro ao carregar opções:', err));
+    }, []);
 
     useEffect(() => {
       if (error || success) {
@@ -101,11 +134,59 @@ function ProductForm({ onAdd }) {
                 type="text"
                 placeholder="Digite o valor"
                 value={displayValue}
-                onChange={handleChange}
+                onChange={handleValueChange}
               />
             </Form.Group>
           </Col>
         </Row>
+
+        {supplies.length > 0 && (
+          <Row className="justify-content-center mb-2">
+            <Col md={6}>
+              <Form.Label>Matérias-primas</Form.Label>
+            </Col>
+          </Row>
+        )}
+
+        {supplies.map((supply, index) => (
+          <Row className="justify-content-center mb-3" key={index}>
+            <Col xs={12} md={3} className="mb-2">
+              <Form.Select
+                value={supply.raw_material}
+                onChange={(e) => updateSupplies(index, 'raw_material', e.target.value)}
+              >
+                <option value="">Selecione...</option>
+                {options.map(raw_material => (
+                  <option key={raw_material.id} value={raw_material.id}>
+                    {raw_material.name}
+                  </option>
+                ))}
+              </Form.Select>
+            </Col>
+            <Col xs={8} md={2} className="mb-2">
+              <Form.Control
+                type="number"
+                placeholder="Quantidade"
+                value={supply.quantity}
+                onChange={(e) => updateSupplies(index, 'quantity', e.target.value)}
+              />
+            </Col>
+            <Col xs={4} md={1} className="mb-2">
+              <Button
+                variant="danger"
+                type="button"
+                className='w-100'
+                onClick={() => removeSupplyFields(index)}
+              >
+                X
+              </Button>
+            </Col>
+          </Row>
+        ))}
+
+        <Button variant="secondary" type="button" onClick={addSupplyFields} className="me-2">
+          Adicionar Matéria-prima
+        </Button>
 
         <Button variant="primary" type="submit">
           Salvar

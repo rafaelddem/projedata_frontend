@@ -16,7 +16,7 @@ function TopNavBar() {
           <Nav className="me-auto">
             <NavDropdown title="Cadastros" id="submenu-servicos">
               <NavDropdown.Item as={Link} to="/materia-prima">
-                Matéria Prima
+                Matéria-prima
               </NavDropdown.Item>
               <NavDropdown.Item as={Link} to="/produto">
                 Produto
