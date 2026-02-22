@@ -4,14 +4,12 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { formatCurrency } from '../../formatter/money';
 
-function ProductForm({ onAdd }) {
+function ProductForm({ onAdd, setError, setSuccess }) {
   const [name, setName] = useState('');
   const [rawValue, setRawValue] = useState(null);
   const [displayValue, setDisplayValue] = useState('');
   const [supplies, setSupplies] = useState([]);
   const [options, setOptions] = useState([]);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
 
   const handleValueChange = (e) => {
     const input = e.target.value.replace(/\D/g, '');
@@ -88,29 +86,8 @@ function ProductForm({ onAdd }) {
         .catch(err => console.error('Erro ao carregar opções:', err));
     }, []);
 
-    useEffect(() => {
-      if (error || success) {
-        const timer = setTimeout(() => {
-          setError(null);
-          setSuccess(null);
-        }, 5000);
-        return () => clearTimeout(timer);
-      }
-    }, [error, success]);
-
   return (
     <>
-      {error && (
-        <Alert variant="danger" className="mb-3">
-          {error}
-        </Alert>
-      )}
-      {success && (
-        <Alert variant="success" className="mb-3">
-          {success}
-        </Alert>
-      )}
-
       <Form onSubmit={handleSubmit}>
         <Row className="justify-content-center">
           <Col xs={12} md={6}>

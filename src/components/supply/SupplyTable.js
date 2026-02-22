@@ -1,7 +1,7 @@
 import Table from 'react-bootstrap/Table';
 import { formatCurrency } from '../../formatter/money';
 
-function SupplyTable({ data, onRemove }) {
+function SupplyTable({ data }) {
   return (
     <Table striped bordered hover responsive>
       <thead>

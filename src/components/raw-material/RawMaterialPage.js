@@ -2,20 +2,43 @@ import { useEffect, useState } from 'react';
 import RawMaterialForm from './RawMaterialForm';
 import RawMaterialTable from './RawMaterialTable';
 import { Container } from 'react-bootstrap';
+import FeedbackAlert from '../FeedbackAlert';
 
 function RawMaterialPage() {
   const [data, setData] = useState([]);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
 
   const loadData = () => {
     fetch('http://localhost:8080/api/raw_materials')
-      .then(response => response.json())
-      .then(json => setData(json))
-      .catch(err => console.error('Erro ao buscar dados:', err));
+      .then(response => {
+        if (!response.ok) {
+          return response.json().then(err => {
+            throw new Error(err.message || 'Erro ao carregar dados');
+          });
+        }
+        return response.json();
+      })
+      .then(json => Array.isArray(json) ? setData(json): setData([]))
+      .catch(err => {
+        setError(err.message);
+        setData([]);
+      });
   };
 
   useEffect(() => {
     loadData();
   }, []);
+
+  useEffect(() => {
+    if (error || success) {
+      const timer = setTimeout(() => {
+        setError(null);
+        setSuccess(null);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [error, success]);
 
   const handleAdd = (newItem) => {
     setData(prev => [...prev, newItem]);
@@ -32,13 +55,16 @@ function RawMaterialPage() {
   };
 
   return (
-    <Container className="mt-5">
-      <h2 className="mb-4">Matéria-prima</h2>
-      <div className="mb-4">
-        <RawMaterialForm onAdd={handleAdd} />
-      </div>
-      <RawMaterialTable data={data} onRemove={handleRemove} />
-    </Container>
+    <>
+      <FeedbackAlert error={error} success={success}></FeedbackAlert>
+      <Container className="mt-5">
+        <h2 className="mb-4">Matéria-prima</h2>
+        <div className="mb-4">
+          <RawMaterialForm onAdd={handleAdd} setError={setError} setSuccess={setSuccess} />
+        </div>
+        <RawMaterialTable data={data} onRemove={handleRemove} />
+      </Container>
+    </>
   );
 }
 
