@@ -14,14 +14,16 @@ function ProductPage() {
       .then(response => {
         if (!response.ok) {
           return response.json().then(err => {
-            throw new Error(err.message || 'Erro ao carregar dados');
+            throw (err.errors) 
+              ? { errors: err.errors }
+              : { errors: ['Erro ao carregar dados'] };
           });
         }
         return response.json();
       })
       .then(json => Array.isArray(json) ? setData(json): setData([]))
       .catch(err => {
-        setError(err.message);
+        setError(err.errors);
         setData([]);
       });
   };
@@ -48,10 +50,18 @@ function ProductPage() {
     fetch(`http://localhost:8080/api/products/${id}`, {
       method: 'DELETE',
     })
-      .then(() => {
+      .then(response => {
+        if (!response.ok) {
+          return response.json().then(err => {
+            throw (err.errors) 
+              ? { errors: err.errors }
+              : { errors: ['Erro ao carregar dados'] };
+          });
+        }
+        setSuccess('Registro removido com sucesso');
         loadData();
       })
-      .catch(err => console.error('Erro ao remover:', err));
+      .catch(err => setError([err.errors]));
   };
 
   return (

@@ -6,8 +6,8 @@ import { formatCurrency } from '../../formatter/money';
 
 function ProductForm({ onAdd, setError, setSuccess }) {
   const [name, setName] = useState('');
-  const [rawValue, setRawValue] = useState(null);
-  const [displayValue, setDisplayValue] = useState('');
+  const [rawValue, setRawValue] = useState(0);
+  const [displayValue, setDisplayValue] = useState(formatCurrency(0));
   const [supplies, setSupplies] = useState([]);
   const [options, setOptions] = useState([]);
 
@@ -19,13 +19,13 @@ function ProductForm({ onAdd, setError, setSuccess }) {
       setRawValue(numericValue);
       setDisplayValue(formatCurrency(numericValue));
     } else {
-      setRawValue(null);
-      setDisplayValue('');
+      setRawValue(0);
+      setDisplayValue(formatCurrency(0));
     }
   };
 
   const addSupplyFields = () => {
-    setSupplies([...supplies, { raw_material: '', quantity: '' }]);
+    setSupplies([...supplies, { raw_material: 0, quantity: 0 }]);
   };
 
   const removeSupplyFields = (index) => {
@@ -71,8 +71,8 @@ function ProductForm({ onAdd, setError, setSuccess }) {
       .then(data => {
         onAdd(data);
         setName('');
-        setRawValue(null);
-        setDisplayValue('');
+        setRawValue(0);
+        setDisplayValue(formatCurrency(0));
         setSupplies([]);
         setSuccess('Cadastro realizado com sucesso!');
       })
