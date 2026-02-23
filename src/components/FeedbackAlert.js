@@ -7,7 +7,9 @@ function FeedbackAlert({ error, success }) {
     <>
       {error && (
         <Alert variant="danger" className="mb-3">
-          {error}
+          {error.map((errMsg, index) => (
+            <div key={index}>{errMsg}</div>
+          ))}
         </Alert>
       )}
       {success && (

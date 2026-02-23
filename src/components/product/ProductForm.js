@@ -61,7 +61,9 @@ function ProductForm({ onAdd, setError, setSuccess }) {
       .then(response => {
         if (!response.ok) {
           return response.json().then(err => {
-            throw new Error(err.message || 'Erro ao salvar');
+            throw (err.errors) 
+              ? { errors: err.errors }
+              : { errors: ['Erro ao salvar'] };
           });
         }
         return response.json();
@@ -75,7 +77,7 @@ function ProductForm({ onAdd, setError, setSuccess }) {
         setSuccess('Cadastro realizado com sucesso!');
       })
       .catch(err => {
-        setError(err.message);
+        setError(err.errors);
       });
     };
 
